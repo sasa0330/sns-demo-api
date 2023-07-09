@@ -24,8 +24,6 @@ router.post(`/login`, async (req, res) => {
   if (!user) {
     return res.status(401).json({ error: "ユーザーが存在しせん" });
   }
-  console.log(user.email);
-  console.log(user.password);
   const isPasseordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasseordValid) {
