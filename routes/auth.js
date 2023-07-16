@@ -3,16 +3,27 @@ const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
+const generateIdenticon = require("../utils/generateIdenticon");
 
 //新規ユーザー登録API
 router.post(`/register`, async (req, res) => {
   const { username, email, password } = req.body;
   const hashedPasswourd = await bcrypt.hash(password, 10);
+  const defaultIdenticon = generateIdenticon(email);
   const user = await prisma.user.create({
     data: {
       username,
       email,
       password: hashedPasswourd,
+      profile: {
+        create: {
+          bio: "初めまして",
+          profileImgUrl: defaultIdenticon,
+        },
+      },
+    },
+    include: {
+      profile: true,
     },
   });
   return res.json({ user });
